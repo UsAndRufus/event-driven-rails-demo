@@ -14,16 +14,8 @@
   <%= javascript_importmap_tags %>
 </head>
   <body>
-    <section class="hero is-primary">
-      <div class="hero-body">
-        <p class="title">
-          GetRichQuick
-        </p>
-        <p class="subtitle">
-          Events for Days
-        </p>
-      </div>
-    </section>
+    <%= render 'layouts/navbar' %>
+
     <section class="section">
       <%= yield %>
     </section>

@@ -1,0 +1,31 @@
+<nav class="navbar is-light" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <span class="navbar-item has-text-weight-bold" href="https://bulma.io">
+      Get Rich Quick
+    </span>
+  </div>
+
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="navbar-start">
+      <%= link_to 'All articles', articles_path, class: 'navbar-item' %>
+    </div>
+
+    <div class="navbar-end">
+      <span class="navbar-item has-text-weight-bold is-family-monospace">
+        <%= @user_name %>
+      </span>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Use page as...
+        </a>
+
+        <div class="navbar-dropdown">
+          <% User.all.each do |user| %>
+            <%= link_to user.name, use_page_as(user), class: 'navbar-item' %>
+          <% end %>
+          <%= link_to 'Reader', use_page_as(nil), class: 'navbar-item' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
