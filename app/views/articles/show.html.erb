@@ -1,10 +1,25 @@
-<p style="color: green"><%= notice %></p>
+<section class="section">
+  <%= render @article %>
 
-<%= render @article %>
+  <br>
 
-<div>
-  <%= link_to "Edit this article", edit_article_path(@article) %> |
-  <%= link_to "Back to articles", articles_path %>
+  <% if @user.present? %>
+    <div class="field is-grouped">
+      <p class="control">
+        <%= link_to "Redraft this article", edit_article_path(@article, user: @user), class: 'button is-info is-outlined' %>
+      </p>
+      <p class="control">
+        <%= button_to "Destroy this article", @article, method: :delete, class: 'button is-danger is-outlined' %>
+      </p>
+    </div>
+  <%end %>
+</section>
 
-  <%= button_to "Destroy this article", @article, method: :delete %>
-</div>
+<% if @user.present? %>
+
+  <section class="section">
+    <h2 class="title is-2">Drafts</h2>
+    <%= render partial: 'draft', collection: @drafts %>
+  </section>
+
+<% end %>

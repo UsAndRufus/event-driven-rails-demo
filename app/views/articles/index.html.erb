@@ -1,4 +1,4 @@
-<div id="articles" class="container">
+<section id="articles" class="section">
   <h1 class="title">Articles</h1>
 
   <% @articles.each do |article| %>
@@ -7,6 +7,8 @@
       <%= link_to "Show this article", article %>
     </p>
   <% end %>
-</div>
 
-<%= link_to "Draft new article", new_article_path(user: @user) %>
+  <p>
+    <%= link_to "Draft new article", new_article_path(user: @user), class: 'button is-primary is-outlined' %>
+  </p>
+</section>

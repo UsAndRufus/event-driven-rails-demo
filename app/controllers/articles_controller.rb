@@ -7,6 +7,14 @@ class ArticlesController < ApplicationController
   end
 
   def show
+    @drafts = Rails.configuration.event_store
+                   .read
+                   .of_type(Events::Articles::Drafted)
+                   .to_a
+
+    @drafts.map! do |draft|
+      { author: User.find(draft.data[:user_id]).name, title: draft.data[:title], body: draft.data[:body] }
+    end
   end
 
   def new
@@ -20,11 +28,11 @@ class ArticlesController < ApplicationController
     @article = Article.new(article_params)
 
     if @article.save
-      event = Events::Articles::Drafted.new(data: { article_id: @article.id, user_id: @user&.id,
-                                                    title: @article.title, body: @article.body })
+      event = Events::Articles::Drafted.new(data: { article_id: @article.id, user_id: @user.id,
+                                                    title: article_params[:title], body: article_params[:body] })
       Rails.configuration.event_store.publish(event)
 
-      redirect_to article_url(@article), notice: "Article was successfully created."
+      redirect_to article_url(@article), notice: "Article drafted."
     else
       render :new, status: :unprocessable_entity
     end
@@ -32,7 +40,12 @@ class ArticlesController < ApplicationController
 
   def update
     if @article.update(article_params)
-      redirect_to article_url(@article), notice: "Article was successfully updated."      else
+      event = Events::Articles::Drafted.new(data: { article_id: @article.id, user_id: @user.id,
+                                                    title: article_params[:title], body: article_params[:body] })
+      Rails.configuration.event_store.publish(event)
+
+      redirect_to article_url(@article), notice: "Article was drafted."
+    else
       render :edit, status: :unprocessable_entity
     end
   end
