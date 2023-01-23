@@ -1,8 +1,6 @@
-<p style="color: green"><%= notice %></p>
+<div id="articles" class="container">
+  <h1 class="title">Articles</h1>
 
-<h1 class="title">Articles</h1>
-
-<div id="articles">
   <% @articles.each do |article| %>
     <%= render article %>
     <p>
@@ -11,4 +9,4 @@
   <% end %>
 </div>
 
-<%= link_to "New article", new_article_path(user: @user) %>
+<%= link_to "Draft new article", new_article_path(user: @user) %>

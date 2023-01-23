@@ -26,6 +26,7 @@
   </div>
 
   <div class="control">
+    <%= hidden_field_tag :user, @user.id %>
     <%= form.submit class: 'button is-primary' %>
   </div>
 <% end %>
