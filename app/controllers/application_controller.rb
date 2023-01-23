@@ -7,4 +7,8 @@ class ApplicationController < ActionController::Base
 
     @user_name = @user&.name || 'Reader'
   end
+
+  def stream_name(record)
+    "#{record.class}$#{record.id}"
+  end
 end

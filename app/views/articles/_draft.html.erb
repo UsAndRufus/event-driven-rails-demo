@@ -3,7 +3,8 @@
     <%= draft[:title] %>
   </h3>
   <h4 class="subtitle is-6">
-    Authored by: <span class="is-family-monospace has-text-weight-bold"><%= draft[:author] %></span>
+    Authored by: <span class="is-family-monospace has-text-weight-bold"><%= draft[:author] %></span>,
+    <%= time_ago_in_words(draft[:drafted_at]) %> ago
   </h4>
   <p>
     <%= draft[:body] %>

@@ -9,11 +9,18 @@ class ArticlesController < ApplicationController
   def show
     @drafts = Rails.configuration.event_store
                    .read
+                   .backward
+                   .stream(stream_name(@article))
                    .of_type(Events::Articles::Drafted)
                    .to_a
 
     @drafts.map! do |draft|
-      { author: User.find(draft.data[:user_id]).name, title: draft.data[:title], body: draft.data[:body] }
+      {
+        author: User.find(draft.data[:user_id]).name,
+        title: draft.data[:title],
+        body: draft.data[:body],
+        drafted_at: draft.metadata[:timestamp]
+      }
     end
   end
 
@@ -28,9 +35,7 @@ class ArticlesController < ApplicationController
     @article = Article.new(article_params)
 
     if @article.save
-      event = Events::Articles::Drafted.new(data: { article_id: @article.id, user_id: @user.id,
-                                                    title: article_params[:title], body: article_params[:body] })
-      Rails.configuration.event_store.publish(event)
+      publish_draft_event
 
       redirect_to article_url(@article), notice: "Article drafted."
     else
@@ -40,9 +45,7 @@ class ArticlesController < ApplicationController
 
   def update
     if @article.update(article_params)
-      event = Events::Articles::Drafted.new(data: { article_id: @article.id, user_id: @user.id,
-                                                    title: article_params[:title], body: article_params[:body] })
-      Rails.configuration.event_store.publish(event)
+      publish_draft_event
 
       redirect_to article_url(@article), notice: "Article was drafted."
     else
@@ -59,16 +62,23 @@ class ArticlesController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_article
-      @article = Article.find(params[:id])
-    end
+  def set_article
+    @article = Article.find(params[:id])
+  end
 
   def auth
     redirect_to articles_path, alert: 'Modifying articles is only available to authors and editors' unless @user.present?
   end
 
     # Only allow a list of trusted parameters through.
-    def article_params
-      params.require(:article).permit(:title, :body)
-    end
+  def article_params
+    params.require(:article).permit(:title, :body)
+  end
+
+  def publish_draft_event
+    event = Events::Articles::Drafted.new(data: { article_id: @article.id, user_id: @user.id,
+                                                  title: article_params[:title], body: article_params[:body] })
+
+    Rails.configuration.event_store.publish(event, stream_name: stream_name(@article))
+  end
 end
