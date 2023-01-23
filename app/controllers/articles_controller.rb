@@ -1,5 +1,6 @@
 class ArticlesController < ApplicationController
   before_action :set_article, only: %i[ show edit update destroy ]
+  before_action :auth, except: %i[ index show ]
 
   # GET /articles or /articles.json
   def index
@@ -62,6 +63,10 @@ class ArticlesController < ApplicationController
     def set_article
       @article = Article.find(params[:id])
     end
+
+  def auth
+    redirect_to articles_path, alert: 'Modifying articles is only available to authors and editors' unless @user.present?
+  end
 
     # Only allow a list of trusted parameters through.
     def article_params
