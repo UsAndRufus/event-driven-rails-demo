@@ -22,6 +22,8 @@ class ArticlesController < ApplicationController
         drafted_at: draft.metadata[:timestamp]
       }
     end
+
+    @contributors = @drafts.map { |d| d[:author] }.uniq.join(', ')
   end
 
   def new
