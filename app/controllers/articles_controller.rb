@@ -27,11 +27,20 @@ class ArticlesController < ApplicationController
                       .of_type(Events::Articles::Published)
                       .to_a
                       .first
-      @article = {
-        id: published.data[:article_id],
-        title: published.data[:title],
-        body: published.data[:body]
-      }
+
+      if published.present?
+        @article = {
+          id: published.data[:article_id],
+          title: published.data[:title],
+          body: published.data[:body]
+        }
+      else
+        @article = {
+          id: nil,
+          title: nil,
+          body: nil
+        }
+      end
     end
 
 
