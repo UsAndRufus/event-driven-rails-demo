@@ -1,24 +1,14 @@
-# README
+# Event-Driven Rails demo
+This is a demo for the talk I delivered at Geekle Ruby on Rails Global Summit 2023
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Installation
+1. Clone repo
+2. Run `bundle install`
+3. Run `rails db:migrate && rails db:seed`
 
-Things you may want to cover:
+## Usage
+You can switch users in the top-right. 
+Authors can write articles and see all drafts. 
+Readers just see published articles.
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+You can view all events at the `/res` endpoint.

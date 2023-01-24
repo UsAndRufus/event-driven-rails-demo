@@ -43,8 +43,6 @@ class ArticlesController < ApplicationController
       end
     end
 
-
-
     @drafts = Rails.configuration.event_store
                    .read
                    .backward
