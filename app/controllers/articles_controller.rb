@@ -1,16 +1,45 @@
 class ArticlesController < ApplicationController
-  before_action :set_article, only: %i[ show edit update destroy ]
+  before_action :set_article, only: %i[ edit update publish ]
   before_action :auth, except: %i[ index show ]
 
   def index
-    @articles = Article.all
+    @articles = Rails.configuration.event_store
+                     .read
+                     .of_type(Events::Articles::Published)
+                     .to_a
+                     .map(&:data)
   end
 
   def show
+    article = Article.find(params[:id])
+
+    if @user.present?
+      @article = {
+        id: article.id,
+        title: article.title,
+        body: article.body
+      }
+    else
+      published = Rails.configuration.event_store
+                      .read
+                      .backward
+                      .stream(stream_name(article))
+                      .of_type(Events::Articles::Published)
+                      .to_a
+                      .first
+      @article = {
+        id: published.data[:article_id],
+        title: published.data[:title],
+        body: published.data[:body]
+      }
+    end
+
+
+
     @drafts = Rails.configuration.event_store
                    .read
                    .backward
-                   .stream(stream_name(@article))
+                   .stream(stream_name(article))
                    .of_type(Events::Articles::Drafted)
                    .to_a
 
@@ -23,7 +52,16 @@ class ArticlesController < ApplicationController
       }
     end
 
-    @contributors = @drafts.map { |d| d[:author] }.uniq.join(', ')
+    @article[:contributors] = @drafts.map { |d| d[:author] }.uniq.join(', ')
+  end
+
+  def publish
+    event = Events::Articles::Published.new(data: { article_id: @article.id, user_id: @user.id,
+                                                    title: @article.title, body: @article.body })
+
+    Rails.configuration.event_store.publish(event, stream_name: stream_name(@article))
+
+    redirect_to article_path(@article, user: @user), notice: 'Article published'
   end
 
   def new
@@ -55,15 +93,8 @@ class ArticlesController < ApplicationController
     end
   end
 
-  # DELETE /articles/1 or /articles/1.json
-  def destroy
-    @article.destroy
-
-    redirect_to articles_url, notice: "Article was successfully destroyed."
-  end
-
   private
-    # Use callbacks to share common setup or constraints between actions.
+
   def set_article
     @article = Article.find(params[:id])
   end

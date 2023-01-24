@@ -1,9 +1,12 @@
 <h2 class="title is-2">
-  <%= article.title %>
+  <%= article[:title] %>
 </h2>
-<h6 class="subtitle is-6">
-  Written by <%= @contributors %>
-</h6>
+<% if article[:contributors].present? %>
+  <h6 class="subtitle is-6">
+    Written by <%= article[:contributors] %>
+  </h6>
+<% end %>
+
 <p>
-  <%= article.body %>
+  <%= article[:body] %>
 </p>

@@ -1,8 +1,10 @@
 Rails.application.routes.draw do
-  resources :articles
-  mount RailsEventStore::Browser => '/res' if Rails.env.development?
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  resources :articles do
+    member do
+      # Should be post
+      get :publish
+    end
+  end
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+  mount RailsEventStore::Browser => '/res' if Rails.env.development?
 end

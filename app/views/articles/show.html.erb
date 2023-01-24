@@ -1,15 +1,15 @@
 <section class="section">
-  <%= render @article %>
+  <%= render 'article', article: @article %>
 
   <br>
 
   <% if @user.present? %>
     <div class="field is-grouped">
       <p class="control">
-        <%= link_to "Redraft this article", edit_article_path(@article, user: @user), class: 'button is-info is-outlined' %>
+        <%= link_to "Redraft this article", edit_article_path(@article[:id], user: @user), class: 'button is-info' %>
       </p>
       <p class="control">
-        <%= button_to "Destroy this article", @article, method: :delete, class: 'button is-danger is-outlined' %>
+        <%= link_to "Publish this article", publish_article_path(@article[:id], user: @user), class: 'button is-warning' %>
       </p>
     </div>
   <%end %>

@@ -1,12 +1,14 @@
 <section id="articles" class="section">
-  <h1 class="title">Articles</h1>
+  <h1 class="title is-1">Articles</h1>
 
   <% @articles.each do |article| %>
-    <%= render article %>
+    <%= render 'article', article: article %>
     <p>
-      <%= link_to "Show this article", article %>
+      <%= link_to "View this article", article_path(article[:article_id]) %>
     </p>
   <% end %>
+
+  <br>
 
   <p>
     <%= link_to "Draft new article", new_article_path(user: @user), class: 'button is-primary is-outlined' %>
